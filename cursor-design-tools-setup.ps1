@@ -1,7 +1,10 @@
 # Installs the same Cursor design setup on this Windows user account:
 #   Taste Skill, Impeccable, Awesome DESIGN.md, Img2ThreeJS,
 #   UX Designer, Canvas Design, Web Artifacts Builder,
-#   App Store Screenshots, Transitions.dev
+#   App Store Screenshots, Transitions.dev, Security Audit,
+#   marketing skills for copy, conversion, SEO, social, and email,
+#   ECC engineering skills for tests, verification, and implementation patterns,
+#   and the ishtiaq-craft router that picks the guideline from the task.
 #
 # Copy this file to the work PC, then in PowerShell:
 #   powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Documents\cursor-design-tools-setup.ps1"
@@ -81,6 +84,35 @@ Invoke-Checked "Transitions.dev" {
     npx --yes skills add https://github.com/Jakubantalik/transitions.dev --skill transitions-dev -g -a cursor -y --copy
 }
 
+Write-Host "Installing Security Audit..."
+Invoke-Checked "Security Audit" {
+    npx --yes skills add https://github.com/cloudflare/security-audit-skill --skill security-audit -g -a cursor -y --copy
+}
+
+Write-Host "Installing marketing skills..."
+Invoke-Checked "marketing skills" {
+    npx --yes skills add coreyhaines31/marketingskills `
+        --skill product-marketing --skill copywriting --skill copy-editing `
+        --skill cro --skill seo-audit --skill ai-seo --skill social `
+        --skill content-strategy --skill emails --skill marketing-ideas `
+        --skill image --skill marketing-psychology `
+        -g -a cursor -y --copy
+}
+
+Write-Host "Installing ECC engineering skills..."
+$eccSkills = @(
+    "search-first", "tdd-workflow", "verification-loop", "change-impact",
+    "coding-standards", "frontend-patterns", "react-patterns", "backend-patterns",
+    "api-design", "error-handling", "e2e-testing", "browser-qa",
+    "security-review", "production-audit"
+)
+$eccArgs = @("--yes", "skills", "add", "https://github.com/affaan-m/ECC")
+foreach ($eccSkill in $eccSkills) {
+    $eccArgs += @("--skill", $eccSkill)
+}
+$eccArgs += @("-g", "-a", "cursor", "-y", "--copy")
+Invoke-Checked "ECC engineering skills" { npx @eccArgs }
+
 function Ensure-Junction {
     param(
         [string]$Link,
@@ -102,6 +134,16 @@ Ensure-Junction (Join-Path $skillsDir "canvas-design") (Join-Path $agentsSkillsD
 Ensure-Junction (Join-Path $skillsDir "web-artifacts-builder") (Join-Path $agentsSkillsDir "web-artifacts-builder")
 Ensure-Junction (Join-Path $skillsDir "app-store-screenshots") (Join-Path $agentsSkillsDir "app-store-screenshots")
 Ensure-Junction (Join-Path $skillsDir "transitions-dev") (Join-Path $agentsSkillsDir "transitions-dev")
+Ensure-Junction (Join-Path $skillsDir "security-audit") (Join-Path $agentsSkillsDir "security-audit")
+foreach ($marketingSkill in @(
+    "product-marketing", "copywriting", "copy-editing", "cro", "seo-audit", "ai-seo",
+    "social", "content-strategy", "emails", "marketing-ideas", "image", "marketing-psychology"
+)) {
+    Ensure-Junction (Join-Path $skillsDir $marketingSkill) (Join-Path $agentsSkillsDir $marketingSkill)
+}
+foreach ($eccSkill in $eccSkills) {
+    Ensure-Junction (Join-Path $skillsDir $eccSkill) (Join-Path $agentsSkillsDir $eccSkill)
+}
 
 Write-Host "Cloning Awesome DESIGN.md..."
 if (Test-Path (Join-Path $libraryDir ".git")) {
@@ -201,5 +243,85 @@ fs.writeFileSync(hooksPath, JSON.stringify(doc, null, 2) + "\n");
 '@ | Set-Content -Path $hookScript -Encoding utf8
 Invoke-Checked "hook update" { node $hookScript $hooksPath $hookCommand }
 
+$routerDir = Join-Path $skillsDir "ishtiaq-craft"
+New-Item -ItemType Directory -Force -Path $routerDir | Out-Null
+$routerBody = @'
+---
+name: ishtiaq-craft
+description: >-
+  Routes a task to guidelines already installed on this machine. Use when the
+  user mentions a design problem, UI, UX, app look, frontend, marketing,
+  copy, landing page, conversion, SEO, social post, email sequence, building
+  or fixing a feature, tests, an API, code review, or a cybersecurity,
+  security, vulnerability, or audit task, including phrases like "design app
+  problem" and "cybersecurity thing."
+---
+
+# Task routing
+
+The guidelines are already on this machine. Do not search GitHub for a skill or ask which repo to use. Read the matching skill and follow it.
+
+Skill folders:
+
+- __SKILLS__
+- __AGENTS__
+
+## Design, UI, UX, or an app-look problem
+
+1. Read `impeccable\SKILL.md` and follow it for the review, layout, and consistency pass.
+2. Read `design-taste-frontend\SKILL.md` and follow it so the result does not look like a generic AI layout.
+3. Read `ux-designer\SKILL.md` when the task is a flow, screens, or usability.
+4. For scroll-linked motion, use StringTune. Do not add GSAP. Install `@fiddle-digital/string-tune` in that project only, register only the modules the interaction needs, and follow https://tune.fiddle.digital/docs/quick-start/. Use one `StringTune.getInstance()`, then `use(...)`, then `start(60)`. Attach effects with `string` attributes and CSS variables.
+5. Read `transitions-dev\SKILL.md` for small hover or CSS motion that is not tied to scroll.
+6. Read `awesome-design-md\SKILL.md` only when the user names a brand or asks for a design system. Copy that system's `DESIGN.md` into the project, then build.
+7. Read `canvas-design\SKILL.md` or `web-artifacts-builder\SKILL.md` when the user wants a standalone visual or a single-page artifact.
+8. Read `app-store-screenshots\SKILL.md` when the user wants store screenshots.
+
+For a page that is both an interface and marketing, follow this section for layout and the marketing section for copy and conversion.
+
+## Marketing
+
+If the current project has no `.agents/product-marketing.md`, read `product-marketing\SKILL.md` and follow it before any other marketing skill.
+
+Then read the one skill that matches the task:
+
+1. Read `copywriting\SKILL.md` for new page copy, headlines, or calls to action.
+2. Read `copy-editing\SKILL.md` to revise existing copy.
+3. Read `cro\SKILL.md` when a page or form needs more conversions.
+4. Read `seo-audit\SKILL.md` when a site is not ranking.
+5. Read `ai-seo\SKILL.md` when the goal is citation in AI answers.
+6. Read `social\SKILL.md` for posts on a specific platform.
+7. Read `content-strategy\SKILL.md` to decide what to publish.
+8. Read `emails\SKILL.md` for a lifecycle or drip sequence.
+9. Read `marketing-ideas\SKILL.md` for campaign ideas.
+10. Read `image\SKILL.md` for marketing images.
+11. Read `marketing-psychology\SKILL.md` when the user asks to apply persuasion or behavioral principles.
+
+## Engineering
+
+Design skills own look and layout. These skills own how the code is built and checked.
+
+1. Read `search-first\SKILL.md` before adding a dependency or writing a utility that may already exist.
+2. Read `tdd-workflow\SKILL.md` when writing a feature, fixing a bug, or refactoring.
+3. Read `change-impact\SKILL.md` before a cross-module, schema, auth, or public-interface change.
+4. Read `coding-standards\SKILL.md` for naming and readability when no framework skill applies.
+5. Read `react-patterns\SKILL.md` for React components. Read `frontend-patterns\SKILL.md` for Next.js state, data fetching, and render performance.
+6. Read `backend-patterns\SKILL.md` for Node, Express, or Next.js API routes. Read `api-design\SKILL.md` for REST naming, status codes, pagination, and errors.
+7. Read `error-handling\SKILL.md` when designing failures, retries, or user-facing errors.
+8. Read `e2e-testing\SKILL.md` for Playwright tests.
+9. Read `browser-qa\SKILL.md` when checking a deployed page in the browser.
+10. Read `security-review\SKILL.md` when adding auth, user input, secrets, or API endpoints.
+11. Read `verification-loop\SKILL.md` before calling the work done or opening a pull request.
+12. Read `production-audit\SKILL.md` for a pre-launch or post-merge readiness check.
+
+## Cybersecurity
+
+Read `security-audit\SKILL.md` and follow it.
+
+Answer a security question from the relevant section. Run the full audit workflow only when the user explicitly asks to audit, pen-test, or review a codebase for vulnerabilities. Use `security-review` for a change that handles auth, input, or secrets. Use this audit skill when the user asks for an audit.
+'@
+$routerBody = $routerBody.Replace('__SKILLS__', $skillsDir).Replace('__AGENTS__', $agentsSkillsDir)
+Set-Content -Path (Join-Path $routerDir "SKILL.md") -Value $routerBody -Encoding utf8
+
 Write-Host ""
-Write-Host "Done. Start a new Cursor chat on this PC, then ask it to build a page with a named design system."
+Write-Host "Done. Start a new Cursor chat on this PC. Describe the task as a design problem, a marketing task, an engineering task, or a cybersecurity problem and Cursor will open the matching guidelines."
