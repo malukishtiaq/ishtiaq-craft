@@ -1,5 +1,7 @@
 # Installs the same Cursor design setup on this Windows user account:
-#   Taste Skill, Impeccable, Awesome DESIGN.md, Img2ThreeJS
+#   Taste Skill, Impeccable, Awesome DESIGN.md, Img2ThreeJS,
+#   UX Designer, Canvas Design, Web Artifacts Builder,
+#   App Store Screenshots, Transitions.dev
 #
 # Copy this file to the work PC, then in PowerShell:
 #   powershell -ExecutionPolicy Bypass -File "$env:USERPROFILE\Documents\cursor-design-tools-setup.ps1"
@@ -59,6 +61,26 @@ Invoke-Checked "Img2ThreeJS" {
     npx --yes skills add https://github.com/img2threejs/img2threejs --skill img2threejs -g -a cursor -y --copy
 }
 
+Write-Host "Installing UX Designer..."
+Invoke-Checked "UX Designer" {
+    npx --yes skills add https://github.com/szilu/ux-designer-skill --skill ux-designer -g -a cursor -y --copy
+}
+
+Write-Host "Installing Canvas Design and Web Artifacts Builder..."
+Invoke-Checked "Canvas Design and Web Artifacts Builder" {
+    npx --yes skills add https://github.com/anthropics/skills --skill canvas-design --skill web-artifacts-builder -g -a cursor -y --copy
+}
+
+Write-Host "Installing App Store Screenshots..."
+Invoke-Checked "App Store Screenshots" {
+    npx --yes skills add https://github.com/ParthJadhav/app-store-screenshots --skill app-store-screenshots -g -a cursor -y --copy
+}
+
+Write-Host "Installing Transitions.dev..."
+Invoke-Checked "Transitions.dev" {
+    npx --yes skills add https://github.com/Jakubantalik/transitions.dev --skill transitions-dev -g -a cursor -y --copy
+}
+
 function Ensure-Junction {
     param(
         [string]$Link,
@@ -75,6 +97,11 @@ function Ensure-Junction {
 
 Ensure-Junction (Join-Path $skillsDir "design-taste-frontend") (Join-Path $agentsSkillsDir "design-taste-frontend")
 Ensure-Junction (Join-Path $skillsDir "img2threejs") (Join-Path $agentsSkillsDir "img2threejs")
+Ensure-Junction (Join-Path $skillsDir "ux-designer") (Join-Path $agentsSkillsDir "ux-designer")
+Ensure-Junction (Join-Path $skillsDir "canvas-design") (Join-Path $agentsSkillsDir "canvas-design")
+Ensure-Junction (Join-Path $skillsDir "web-artifacts-builder") (Join-Path $agentsSkillsDir "web-artifacts-builder")
+Ensure-Junction (Join-Path $skillsDir "app-store-screenshots") (Join-Path $agentsSkillsDir "app-store-screenshots")
+Ensure-Junction (Join-Path $skillsDir "transitions-dev") (Join-Path $agentsSkillsDir "transitions-dev")
 
 Write-Host "Cloning Awesome DESIGN.md..."
 if (Test-Path (Join-Path $libraryDir ".git")) {
